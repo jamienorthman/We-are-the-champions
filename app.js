@@ -33,26 +33,31 @@ addButton.addEventListener("click", function() {
 //and Object.entries (this one returns an array with smaller arrays
 //for both the keys and values inside)
 onValue(commentsInDB, function(snapshot) {
-    let commentsArray = Object.values(snapshot.val())
+    let commentsArray = Object.entries(snapshot.val())
 
     clearCommentListEl()
     
     for (let i = 0; i < commentsArray.length; i++) {
         let currentComment = commentsArray[i]
-        appendCommentToList(currentComment)
-        console.log(currentComment)
+        let currentCommentID = currentComment[0]
+        let currentCommentValue = currentComment[1]
+        
+        appendCommentToList(currentCommentValue)
     }
 })
 
 function clearCommentListEl() {
     commentListEl.innerHTML = ""
 }
-//this function needs a parameter because we want to use inputValue
+//this function below needs a parameter because we want to use inputValue
 //but can't since it was made inside ANOTHER function. Since
 //inputValue is out of scope, we use commentValue here and can plug-in
 //inputValue when we call appendCommentToList in the click function:
 function appendCommentToList(commentValue) {
-    commentListEl.innerHTML += `<li>${commentValue}`
+    //commentListEl.innerHTML += `<li>${commentValue}`
+    let newEl = document.createElement("li")
+    newEl.textContent = commentValue
+    commentListEl.append(newEl)
 }
 
 function clearInputFieldEl() {
