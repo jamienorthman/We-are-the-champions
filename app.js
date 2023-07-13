@@ -2,7 +2,7 @@
 //keyword comes from. initializeApp, getDatabase, ref, push are all 
 //firebase functions that we're using and the file links are their code:
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"
-import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
 
 const appSettings = {
     databaseURL: "https://we-are-the-champions-28a7f-default-rtdb.europe-west1.firebasedatabase.app/"
@@ -33,34 +33,55 @@ addButton.addEventListener("click", function() {
 //and Object.entries (this one returns an array with smaller arrays
 //for both the keys and values inside)
 onValue(commentsInDB, function(snapshot) {
-    let commentsArray = Object.entries(snapshot.val())
+    if (snapshot.exists()) {
+        let commentsArray = Object.entries(snapshot.val())
 
-    clearCommentListEl()
-    
-    for (let i = 0; i < commentsArray.length; i++) {
-        let currentComment = commentsArray[i]
-        let currentCommentID = currentComment[0]
-        let currentCommentValue = currentComment[1]
+        clearCommentListEl()
         
-        appendCommentToList(currentCommentValue)
+        for (let i = 0; i < commentsArray.length; i++) {
+            let currentComment = commentsArray[i]
+            let currentCommentID = currentComment[0]
+            let currentCommentValue = currentComment[1]
+            
+            appendCommentToList(currentComment)
+            commentListEl.style.color = "black";
+        }
+    } else {
+        commentListEl.innerHTML = "No endorsements yet..."
+        commentListEl.style.color = "white";
     }
+  
 })
 
 function clearCommentListEl() {
     commentListEl.innerHTML = ""
 }
-//this function below needs a parameter because we want to use inputValue
-//but can't since it was made inside ANOTHER function. Since
-//inputValue is out of scope, we use commentValue here and can plug-in
-//inputValue when we call appendCommentToList in the click function:
-function appendCommentToList(commentValue) {
-    //commentListEl.innerHTML += `<li>${commentValue}`
-    let newEl = document.createElement("li")
-    newEl.textContent = commentValue
-    commentListEl.append(newEl)
-}
 
 function clearInputFieldEl() {
     inputFieldEl.value = ""
 }
+
+//this function below needs a parameter because we want to use inputValue
+//but can't since it was made inside ANOTHER function. Since
+//inputValue is out of scope, we use commentValue here and can plug-in
+//inputValue when we call appendCommentToList in the click function:
+function appendCommentToList(comment) {
+    //commentListEl.innerHTML += `<li>${commentValue}`
+    let commentID = comment[0]
+    let commentValue = comment[1]
+    
+    let newEl = document.createElement("li")
+    
+    newEl.textContent = commentValue
+
+    newEl.addEventListener("dblclick", function() {
+        let locationOfCommentInDB = ref(database, `comments/${commentID}`)
+
+        remove(locationOfCommentInDB)
+    })
+    
+    commentListEl.append(newEl)
+}
+
+
 
