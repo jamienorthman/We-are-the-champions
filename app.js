@@ -1,5 +1,5 @@
 //Using code that lives on Firebase's servers, that's where 'import'
-//keyword comes from. initializeApp, getDatabase, ref, push are all 
+//keyword comes from. initializeApp, getDatabase, ref, push, remove are all 
 //firebase functions that we're using and the file links are their code:
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
